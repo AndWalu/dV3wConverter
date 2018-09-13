@@ -4,23 +4,22 @@ SET STARTED=%time%
 GOTO START
 ################################################################
 #                                                              #
-#  Author: AWa.                                                #
+#  Author: AndWalu                                             #
 #  Date: 2018-09-12                                            #
 #                                                              #
 ################################################################
 
 :START
-
 REM cmake generator. 
 REM Use "cmake -G" to list generators and chose this installed on your system. 
 SET GENERATOR=Visual Studio 15 2017
 
 REM Microsoft Visual Studio IDE directories 
-SET MSVSIDE=c:\hdd\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE
+SET MSVSIDE=c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE
 REM SET MSVSIDE=c:\Program Files\Microsoft Visual Studio\2017\Community\Common7\IDE
 
 REM Path to git command if any. Comment this line if you do not have git installed.
-REM SET GITPATH=%MSVSIDE%\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\mingw32\bin
+SET GITPATH=%MSVSIDE%\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\mingw32\bin
 
 REM ###################################################################################################################
 

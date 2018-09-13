@@ -59,4 +59,4 @@ If the 3w file prefix is not specified on the command line it is assumed that it
   
   
 ## 3w file structure
-![Diagram of 3w file structure](/dV3wConverter\Documentation\img\3w_file.gif)
+![](https://github.com/AndWalu/dV3wConverter/raw/master/dV3wConverter/Documentation/img/3w_file.gif)

@@ -12,7 +12,7 @@
 To compile this software is needed the Microsoft Visual Studio C++ compiler with cmake and git support.<br>
 This software was tested with version 2017 of Visual Studio.<br>
 To download all needed library and compile the program run script: **dV3wConverter.cmd**<br>
-This script assumes that Visual Studio is installed in "c:\Program Files\Microsoft Visual Studio\2017\Community" directory.<br>
+This script assumes that Visual Studio IDE is installed in "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE" directory.<br>
 You can adjust this by changing the variable **MSVSIDE** at line 18 in **dV3wConverter.cmd**  file.<br>
 The **git** utility is needed to download all necessary library.<br>
 The script try to use a **git** version supplied with Visual Studio but it sometimes fail for no reason.<br>

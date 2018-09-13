@@ -55,7 +55,7 @@ If the 3w file prefix is not specified on the command line it is assumed that it
  * /G - input file for conversion in GCODE format
  * /PW - input file for printing in 3w format
  * /PG - input file for printing in GCODE format
- * /Y - owerwrite files
+ * /Y - overwrite files
   
   
 ## 3w file structure

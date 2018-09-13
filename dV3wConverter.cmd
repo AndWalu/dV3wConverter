@@ -38,7 +38,7 @@ REM goto LINK
 ECHO.
 IF EXIST tiny-AES-c (
     ECHO Updating tiny-AES-c
-	git  -C tiny-AES-c pull .
+	git  -C tiny-AES-c pull
 ) ELSE (
     ECHO Downloading tiny-AES-c
 	git  clone https://github.com/kokke/tiny-AES-c.git
@@ -49,7 +49,7 @@ IF %ERRORLEVEL% NEQ 0 GOTO AESERROR
 ECHO.
 IF EXIST zlib (
     ECHO Updating zlib
-	git  -C zlib pull .
+	git  -C zlib pull
 ) ELSE (
     ECHO Downloading zlib
 	git  clone https://github.com/madler/zlib.git
@@ -111,7 +111,7 @@ popd
 ECHO.
 IF EXIST libzip (
     ECHO Updating libzip
-	git  -C libzip pull .
+	git  -C libzip pull
 ) ELSE (
     ECHO Downloading libzip
 	git  clone https://github.com/nih-at/libzip.git

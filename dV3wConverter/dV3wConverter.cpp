@@ -382,7 +382,7 @@ int wmain ( int argc, TCHAR *argv[])
 	}
 
 	if ((bMode == mGCODE) || (bMode = mPRINT_GCODE)) {
-		for (DWORD i; i < InputFileSize; i++) {
+		for (DWORD i = 0; i < InputFileSize; i++) {
 			if (InputBuffer[i] == 0x0A) InputBuffer[i] = 0x0D;
 		}
 	}

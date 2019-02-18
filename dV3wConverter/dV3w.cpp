@@ -42,6 +42,7 @@ struct zip_source *ZipGcodeSource = NULL; ///< libzip - zip source for GCODE dat
 										  /** @} */ // end of LIBZIP group
 
 int dV3w_Send(HANDLE hCOM, char* Buffer, WORD sLen, char* Response, char* Info, DWORD ResponseLen = 10);
+int dV3w_Status(HANDLE hCOM);
 
 #ifndef _CONSOLE
 wchar_t wMsgBuffer[MSGSIZE];
@@ -348,8 +349,13 @@ int dV3w_Print(HANDLE hCOM, PBYTE GcodeBuffer, uint64_t GcodeLength, HWND hDlg, 
 
 	HWND Label = GetDlgItem(hDlg, nIDDlgItem);
 
+	// Send status command
+	if (Status = dV3w_Status(hCOM)) {
+		return Status;
+	}
+
 	// Send file command
-	sLen = sprintf_s(Buffer, PRINT_CHUNK_LEN, "XYZ_@3D:4");
+	sLen = sprintf_s(Buffer, PRINT_CHUNK_LEN, "XYZ_@3D:4\n");
 	if (Status = dV3w_Send(hCOM, Buffer, sLen, (char*)"OFFLINE_OK", (char*)"The printer is not responding to the command.", 10)) {
 		return Status;
 	}
@@ -412,6 +418,39 @@ int dV3w_Send(HANDLE hCOM, char* Buffer, WORD sLen, char* Response, char* Info, 
 	ReadFile(hCOM, Buffer, 2, &Read_Len, NULL);
 	return 0;
 }
+
+//----------------------------------------------------------------------------------------------------------
+
+int dV3w_Status(HANDLE hCOM) {
+	DWORD Write_Len, Read_Len;
+	char Buffer[100];
+	int Pos;
+
+	WriteFile(hCOM, "XYZv3/query=a", 13, &Write_Len, NULL);
+
+	while (1) {
+		Pos = 0;
+		while (Pos < 99) {
+			ReadFile(hCOM, &Buffer[Pos], 1, &Read_Len, NULL);
+			if (Buffer[Pos] == '\n') {
+				Buffer[Pos + 1] = 0;
+				break;
+			}
+			if (Read_Len == 0) break;
+			Pos += Read_Len;
+		}
+		if (Buffer[Pos - 1] == '$') {
+			break;
+		}
+		if (Read_Len == 0) {
+			ERRORPRINT(L"\nReading printer status failed.\n");
+			Status = PRN_ERROR;
+			return(PRN_ERROR);
+		}
+	}
+	return 0;
+}
+
 
 //----------------------------------------------------------------------------------------------------------
 

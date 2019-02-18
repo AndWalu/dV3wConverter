@@ -381,9 +381,14 @@ int wmain ( int argc, TCHAR *argv[])
 		return IO_ERROR;
 	}
 
-	switch (bMode) {
-		case mGCODE:
+	if ((bMode == mGCODE) || (bMode = mPRINT_GCODE)) {
+		for (DWORD i; i < InputFileSize; i++) {
+			if (InputBuffer[i] == 0x0A) InputBuffer[i] = 0x0D;
+		}
+	}
 
+	switch (bMode) {
+		case mGCODE:			
 			if (PrefixFileName != NULL) {
 				if (iReturn = dV3w_Encode(InputBuffer, InputFileSize, &pOutputBuffer, &GcodeLength)) return(iReturn);
 

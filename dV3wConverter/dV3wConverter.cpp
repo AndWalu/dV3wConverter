@@ -381,7 +381,7 @@ int wmain ( int argc, TCHAR *argv[])
 		return IO_ERROR;
 	}
 
-	if ((bMode == mGCODE) || (bMode = mPRINT_GCODE)) {
+	if ((bMode == mGCODE) || (bMode == mPRINT_GCODE)) {
 		for (DWORD i = 0; i < InputFileSize; i++) {
 			if (InputBuffer[i] == 0x0A) InputBuffer[i] = 0x0D;
 		}

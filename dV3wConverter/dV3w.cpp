@@ -349,12 +349,6 @@ int dV3w_Print(HANDLE hCOM, PBYTE GcodeBuffer, uint64_t GcodeLength, HWND hDlg, 
 
 	HWND Label = GetDlgItem(hDlg, nIDDlgItem);
 
-	for (uint64_t i = 0; i < GcodeLength; i++) {
-		if (GcodeBuffer[i] == 0x0A) GcodeBuffer[i] = 0x0D;
-
-		INFOPRINT(L"%cSending:  %lu%%", 13, i);
-	}
-
 	// Send status command
 	if (Status = dV3w_Status(hCOM)) {
 		return Status;
@@ -385,7 +379,8 @@ int dV3w_Print(HANDLE hCOM, PBYTE GcodeBuffer, uint64_t GcodeLength, HWND hDlg, 
 		Sum = 0;
 		for (int j = 0; j < sLen; j++) {
 			Buffer[j] = GcodeBuffer[i + j];
-			Sum += GcodeBuffer[i + j];
+			if (Buffer[j] == 0x0A) Buffer[j] = 0x0D;
+			Sum += Buffer[j];
 		}
 		pBy = (PBYTE)&Sum;
 		for (int k = 0; k < 4; k++) {
@@ -393,7 +388,8 @@ int dV3w_Print(HANDLE hCOM, PBYTE GcodeBuffer, uint64_t GcodeLength, HWND hDlg, 
 		}
 
 
-		INFOPRINT( L"%cSending:  %6.2f%%", 13, (100.0*i) / GcodeLength);
+		INFOPRINT(L"Sending: %6.2f%%", (100.0*i) / GcodeLength);
+
 //		DEBUGBOX(L"dV3w_Sending\n");
 
 		if( Status = dV3w_Send(hCOM, Buffer, sLen + 4, (char*)"CheckSumOK", (char*)"The printer rejects a data chunk.", 14)) {
@@ -402,7 +398,7 @@ int dV3w_Print(HANDLE hCOM, PBYTE GcodeBuffer, uint64_t GcodeLength, HWND hDlg, 
 //		DEBUGBOX(L"dV3w_Send\n");
 
 	}
-	INFOPRINT( L"%cSending:  100.00%%", 13);	
+	INFOPRINT( L"Sending:  100.00%%");	
 	fwprintf(stderr, L"\n");
 	return 0;
 }

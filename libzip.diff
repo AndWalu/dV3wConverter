@@ -1,0 +1,15 @@
+diff --git a/lib/zipint.h b/lib/zipint.h
+index 0333b87..dc963de 100644
+--- a/lib/zipint.h
++++ b/lib/zipint.h
+@@ -1,6 +1,10 @@
+ #ifndef _HAD_ZIPINT_H
+ #define _HAD_ZIPINT_H
+ 
++#ifndef O_CLOEXEC
++#define O_CLOEXEC 0
++#endif /* O_CLOEXEC */
++
+ /*
+   zipint.h -- internal declarations.
+   Copyright (C) 1999-2018 Dieter Baron and Thomas Klausner

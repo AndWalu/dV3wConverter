@@ -12,11 +12,11 @@ GOTO START
 :START
 REM cmake generator. 
 REM Use "cmake -G" to list generators and chose this installed on your system. 
-SET GENERATOR=Visual Studio 15 2017
+SET GENERATOR=Visual Studio 16 2019
 
 REM Microsoft Visual Studio IDE directories 
-SET MSVSIDE=c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE
-REM SET MSVSIDE=c:\Program Files\Microsoft Visual Studio\2017\Community\Common7\IDE
+REM SET MSVSIDE=c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE
+SET MSVSIDE=c:\Program Files\Microsoft Visual Studio\2019\Community\Common7\IDE
 
 REM Path to git command if any. Comment this line if you do not have git installed.
 SET GITPATH=%MSVSIDE%\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\mingw32\bin
@@ -24,7 +24,7 @@ SET GITPATH=%MSVSIDE%\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Gi
 REM ###################################################################################################################
 
 REM Add the git and cmake directories to PATH environment variable
-PATH=%MSVSIDE%\CommonExtensions\Microsoft\CMake\CMake\bin;%MSVSIDE%\..\..\MSBuild\15.0\Bin;%GITPATH%;%PATH%;
+PATH=%MSVSIDE%\CommonExtensions\Microsoft\CMake\CMake\bin;%MSVSIDE%\..\..\MSBuild\Current\Bin;%GITPATH%;%PATH%;
 
 ECHO.
 CALL :MK_LIB_DIRS Win32
@@ -59,8 +59,10 @@ IF %ERRORLEVEL% NEQ 0 GOTO ZLIBERROR
 IF NOT EXIST zlib\build ( md zlib\build )
 IF %ERRORLEVEL% NEQ 0 GOTO ZLIBERROR
 
+ECHO.
+ECHO Building zlib x32
 pushd zlib\build
-cmake -G"%GENERATOR%" -DCMAKE_INSTALL_PREFIX="..\..\win32" ..
+cmake -G"%GENERATOR%" -A win32 -DCMAKE_INSTALL_PREFIX="..\..\win32" ..
 
 for /F "tokens=1,2 delims=<>	 " %%a IN ( zlibstatic.vcxproj ) DO (
 	IF "WindowsTargetPlatformVersion"=="%%a" SET  WinTargetPVer=%%b
@@ -72,7 +74,6 @@ IF %ERRORLEVEL% NEQ 0 GOTO ZLIBERROR
 xcopy ..\zlib.h ..\..\Win32\include\ /S /V /F /R /Y
 IF %ERRORLEVEL% NEQ 0 GOTO ZLIBERROR
 
-IF %ERRORLEVEL% NEQ 0 GOTO ZLIBERROR
 MSBuild.exe  /p:Configuration=Debug zlibstatic.vcxproj
 IF %ERRORLEVEL% NEQ 0 GOTO ZLIBERROR
 xcopy Debug ..\..\Win32\lib\ /S /V /F /R /Y
@@ -86,8 +87,10 @@ popd
 
 IF NOT EXIST zlib\build_x64 ( md zlib\build_x64 )
 
+ECHO.
+ECHO Building zlib x64
 pushd zlib\build_x64
-cmake  -G"%GENERATOR% Win64" -DCMAKE_INSTALL_PREFIX="..\..\lib\x64" ..
+cmake  -G"%GENERATOR%" -A x64 -DCMAKE_INSTALL_PREFIX="..\..\lib\x64" ..
 
 xcopy zconf.h ..\..\x64\include\ /S /V /F /R /Y
 IF %ERRORLEVEL% NEQ 0 GOTO ZLIBERROR
@@ -117,11 +120,14 @@ IF EXIST libzip (
 	git  clone https://github.com/nih-at/libzip.git
 )
 IF %ERRORLEVEL% NEQ 0 GOTO LIBZIPERROR
+git -C libzip apply ..\..\libzip.diff
 
+ECHO.
+ECHO Building libzip x32
 IF NOT EXIST libzip\build ( md libzip\build )
 pushd libzip\build
 
-cmake -G"%GENERATOR%" -DCMAKE_PREFIX_PATH="..\Win32" -DZLIB_LIBRARY="zlibstatic.lib;zlibstaticd.lib" -DENABLE_GNUTLS="OFF" -DENABLE_OPENSSL="OFF" -DENABLE_COMMONCRYPTO="OFF" -DENABLE_BZIP2="OFF" -DBUILD_REGRESS="OFF" -DBUILD_EXAMPLES="OFF" -DBUILD_DOC="OFF" -DBUILD_SHARED_LIBS="OFF" ..
+cmake -G"%GENERATOR%" -A win32 -DCMAKE_PREFIX_PATH="..\Win32" -DZLIB_LIBRARY="zlibstatic.lib;zlibstaticd.lib" -DENABLE_GNUTLS="OFF" -DENABLE_OPENSSL="OFF" -DENABLE_COMMONCRYPTO="OFF" -DENABLE_BZIP2="OFF" -DBUILD_REGRESS="OFF" -DBUILD_EXAMPLES="OFF" -DBUILD_DOC="OFF" -DBUILD_SHARED_LIBS="OFF" ..
 IF %ERRORLEVEL% NEQ 0 GOTO LIBZIPERROR
 
 xcopy zipconf.h  ..\..\Win32\include\ /S /V /F /R /Y
@@ -142,9 +148,12 @@ IF %ERRORLEVEL% NEQ 0 GOTO ZLIBERROR
 popd
 
 IF NOT EXIST libzip\build_x64 ( md libzip\build_x64 )
+
+ECHO.
+ECHO Building libzip x64
 pushd libzip\build_x64
 
-cmake -G"%GENERATOR% Win64" -DCMAKE_PREFIX_PATH="..\x64" -DZLIB_LIBRARY="zlibstatic.lib;zlibstaticd.lib" -DENABLE_GNUTLS="OFF" -DENABLE_OPENSSL="OFF" -DENABLE_COMMONCRYPTO="OFF" -DENABLE_BZIP2="OFF" -DBUILD_REGRESS="OFF" -DBUILD_EXAMPLES="OFF" -DBUILD_DOC="OFF" -DBUILD_SHARED_LIBS="OFF" ..
+cmake -G"%GENERATOR%" -A x64 -DCMAKE_PREFIX_PATH="..\x64" -DZLIB_LIBRARY="zlibstatic.lib;zlibstaticd.lib" -DENABLE_GNUTLS="OFF" -DENABLE_OPENSSL="OFF" -DENABLE_COMMONCRYPTO="OFF" -DENABLE_BZIP2="OFF" -DBUILD_REGRESS="OFF" -DBUILD_EXAMPLES="OFF" -DBUILD_DOC="OFF" -DBUILD_SHARED_LIBS="OFF" ..
 IF %ERRORLEVEL% NEQ 0 GOTO LIBZIPERROR
 
 xcopy zipconf.h  ..\..\x64\include\ /S /V /F /R /Y
@@ -169,6 +178,8 @@ echo.
 CALL :MK_LINK Win32
 CALL :MK_LINK x64
 
+ECHO.
+ECHO Building dV3wConverter
 :DV3WCONVERTER
 cd ..\
 MSBuild.exe  /p:Configuration=Debug   /p:Platform=x64   %WinTargetPVer% dV3wConverter.sln

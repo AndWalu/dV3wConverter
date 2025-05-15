@@ -1,5 +1,8 @@
 # dV3wConverter
 
+Visual Studio 2022 fork
+https://github.com/Bond-Addict/XyzConverter
+
 ## Overview
 
 3wConverter tool is used to:
